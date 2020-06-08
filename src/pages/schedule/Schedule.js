@@ -4,19 +4,10 @@ import Link from '@material-ui/core/Link';
 import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 import ScheduleCard from './components/ScheduleCard'
+import {getSubjects} from "../../modules/Subject";
+import {makeStyles} from "@material-ui/core/styles";
+import {withRouter} from 'react-router-dom'
 
-function Copyright() {
-	return (
-		<Typography variant="body2" color="textSecondary" align="center">
-			{'Copyright © '}
-			<Link color="inherit" href="https://material-ui.com/">
-				Your Website
-        </Link>{' '}
-			{new Date().getFullYear()}
-			{'.'}
-		</Typography>
-	);
-}
 
 function Schedule() {
 	return (<>
@@ -24,75 +15,38 @@ function Schedule() {
 				{/* Chart */}
 				<MapSchedules />
 			</Grid>
-			<Box pt={4}>
-				<Copyright />
-			</Box>
 			</>
 	)
 }
 
-const data = [
-	{
-		day: "Понедельник",
-		schedules: [
-			"Физика Илларионова В.С 314каб",
-			"Математика Красава В.С 312каб",
-			"Хуятика ТаСамаяХуевая В.С 123каб",
-			"Русятина ТаСамаяЗлая В.С 666каб",
-		]
+const useStyles = makeStyles((theme) => ({
+	container: {
+		margin: 16
 	},
-	{
-		day: "Вторник",
-		schedules: [
-			"Физика Илларионова В.С 314каб",
-			"Математика Красава В.С 312каб",
-			"Хуятика ТаСамаяХуевая В.С 123каб",
-			"Русятина ТаСамаяЗлая В.С 666каб",
-		]
-	},
-	{
-		day: "Среда",
-		schedules: [
-			"Физика Илларионова В.С 314каб",
-			"Математика Красава В.С 312каб",
-			"Хуятика ТаСамаяХуевая В.С 123каб",
-			"Русятина ТаСамаяЗлая В.С 666каб",
-		]
-	},
-	{
-		day: "Четверг",
-		schedules: [
-			"Физика Илларионова В.С 314каб",
-			"Математика Красава В.С 312каб",
-			"Хуятика ТаСамаяХуевая В.С 123каб",
-			"Русятина ТаСамаяЗлая В.С 666каб",
-		]
-	},
-	{
-		day: "Пятница",
-		schedules: [
-			"Физика Илларионова В.С 314каб",
-			"Математика Красава В.С 312каб",
-			"Хуятика ТаСамаяХуевая В.С 123каб",
-			"Русятина ТаСамаяЗлая В.С 666каб",
-		]
-	},
-	{
-		day: "Суббота",
-		schedules: [
-			"Физика Илларионова В.С 314каб",
-			"Математика Красава В.С 312каб",
-			"Хуятика ТаСамаяХуевая В.С 123каб",
-			"Русятина ТаСамаяЗлая В.С 666каб",
-		]
-	},
-]
+}))
+function MapSchedules(props) {
+	const classes = useStyles()
 
-function MapSchedules() {
-	return (
-		data.map(row => <ScheduleCard data={row}></ScheduleCard>)
-  )
+	const [subjects, setSubjects] = React.useState(false)
+	React.useEffect(()=> {
+		if (!subjects) {
+			waiter()
+		}
+	}, [])
+	const waiter = async () => {
+		const res = await getSubjects()
+		setSubjects(res)
+	}
+	if (subjects && subjects[0]) {
+		return (
+			subjects.map(row => <ScheduleCard data={row}></ScheduleCard>)
+		)
+	} else {
+		return <Typography className={classes.container} component="h1" variant="h5" color="primary" gutterBottom>
+			Упс, заданий пока нет :)
+		</Typography>
+	}
 }
 
 
-export default Schedule
+export default withRouter(Schedule)

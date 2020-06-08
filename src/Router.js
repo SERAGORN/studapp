@@ -22,7 +22,7 @@ function Router() {
     return (
         <Container maxWidth="lg" className={classes.container}>
                 <Switch>
-                    <Route path="/editschedule">
+                    <Route path="/editschedule/:day">
                         <ScheduleEdit/>
                     </Route>
                     <Route path="/srs">

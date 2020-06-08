@@ -6,7 +6,7 @@ import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import {withRouter} from 'react-router-dom'
-
+import {Link} from "react-router-dom"
 const useStyles = makeStyles((theme) => ({
     paper: {
         padding: theme.spacing(2),
@@ -19,11 +19,38 @@ const useStyles = makeStyles((theme) => ({
     },
 }))
 
+function ListOfSchedules(props) {
+    return props.data.map((row, key) => {
+        if (row.room == 0) {
+            return (
+                <div style={{display: "flex", flexDirection: "row", justifyContent:"start"}}>
+                    <ListItemText width={20} primary={key}/>
+                    <ListItemText primary={"Окошка"}/>
+                </div>
+            )
+        } else {
+            return (
+                <div style={{display: "flex", flexDirection: "row"}}>
+                    <ListItemText primary={key}/>
+                    <div style={{display: "flex", flexDirection: "row"}}>
+                        <ListItemText primary={row.name}/>
+                        <ListItemText primary={row.professor}/>
+                        <ListItemText primary={row.room}/>
+                        <ListItemText primary={row.building}/>
+                    </div>
+                </div>)
+        }
+    })
+}
+
 function ScheduleCard(props) {
     const classes = useStyles()
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight)
 
-    return <Grid item xs={12} md={8} lg={9} onClick={()=>props.history.push("/editschedule")}>
+    return <Grid item xs={12} md={8} lg={9}
+        onClick={()=>props.history.push({
+            pathname: "/editschedule/"+props.data.day
+        })}>
         <Paper className={fixedHeightPaper}>
         <Typography component="h2" variant="h6" color="primary" gutterBottom>
             {props.data.day}
@@ -33,10 +60,6 @@ function ScheduleCard(props) {
     </Grid>
 }
 
-function ListOfSchedules(props) {
-    return props.data.map(row => {
-        return (<ListItemText primary={row}/>)
-    })
-}
+
 
 export default withRouter(ScheduleCard)
