@@ -68,15 +68,41 @@ function Day(props) {
 
 const Srs = (props) => {
     const [tasks, setTasks] = React.useState(false)
-    React.useEffect(async ()=> {
+    React.useEffect(()=> {
         if (!tasks) {
-            let res = await getTasks()
-            let obj = []
-            for (let i = 0; i < res.length; i++) {
-                let parsedDate = new Date(res[i].expire)
-                let stringDate = (parsedDate.getFullYear().toString()+"-"+(parsedDate.getMonth()+1).toString()+"-"+parsedDate.getDate().toString())
-                if (obj.length === 0) {
-                    obj = [{
+            waiter()
+        }
+    }, [])
+    let waiter = async () => {
+        let res = await getTasks()
+        let obj = []
+        for (let i = 0; i < res.length; i++) {
+            let parsedDate = new Date(res[i].expire)
+            let stringDate = (parsedDate.getFullYear().toString()+"-"+(parsedDate.getMonth()+1).toString()+"-"+parsedDate.getDate().toString())
+            if (obj.length === 0) {
+                obj = [{
+                    date: stringDate,
+                    items: [
+                        {
+                            subj: res[i].subject_id,
+                            title: res[i].text
+                        }
+                    ]
+                }]
+            } else {
+                let canPushNew = true
+                for (let j = 0; j < obj.length ; j++) {
+                    if (obj[j].date === stringDate) {
+                        obj[j].items.push({
+                            subj: res[i].subject_id,
+                            title: res[i].text
+                        })
+                        canPushNew = false
+                        break
+                    }
+                }
+                if (canPushNew) {
+                    obj.push({
                         date: stringDate,
                         items: [
                             {
@@ -84,35 +110,12 @@ const Srs = (props) => {
                                 title: res[i].text
                             }
                         ]
-                    }]
-                } else {
-                    let canPushNew = true
-                    for (let j = 0; j < obj.length ; j++) {
-                        if (obj[j].date === stringDate) {
-                            obj[j].items.push({
-                                subj: res[i].subject_id,
-                                title: res[i].text
-                            })
-                            canPushNew = false
-                            break
-                        }
-                    }
-                    if (canPushNew) {
-                        obj.push({
-                            date: stringDate,
-                            items: [
-                                {
-                                    subj: res[i].subject_id,
-                                    title: res[i].text
-                                }
-                            ]
-                        })
-                    }
+                    })
                 }
             }
-            setTasks(obj)
         }
-    }, [])
+        setTasks(obj)
+    }
     const classes = useStyles()
     if (tasks && tasks[0]) {
         console.log(tasks)

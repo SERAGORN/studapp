@@ -27,7 +27,7 @@ function ScheduleCard(props) {
     const classes = useStyles()
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight)
 
-    return <Grid className={classes.container} item xs={12} md={8} lg={9} onClick={()=>props.history.push("/editschedule")}>
+    return <Grid className={classes.container} item xs={12} md={8} lg={9}>
         <Paper className={fixedHeightPaper}>
         <Typography component="h2" variant="h6"  gutterBottom>
             {props.data.subj}
